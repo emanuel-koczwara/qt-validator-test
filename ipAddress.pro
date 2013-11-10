@@ -1,20 +1,13 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2013-11-10T21:40:21
-#
-#-------------------------------------------------
-
-QT       += core gui
+QT += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = ipAddress
+
 TEMPLATE = app
 
+SOURCES += src/main.cpp src/MainWindow.cpp
 
-SOURCES += main.cpp\
-        MainWindow.cpp
+HEADERS += src/MainWindow.hpp
 
-HEADERS  += MainWindow.hpp
-
-FORMS    += MainWindow.ui
+FORMS += src/MainWindow.ui
