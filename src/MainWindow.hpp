@@ -19,6 +19,14 @@ public:
   explicit MainWindow(QWidget *parent = 0);
   virtual ~MainWindow();
 
+public slots:
+  void convertIpToInt();
+  void convertIntToHex();
+  void convertHexToBase64();
+  void convertBase64ToHex();
+  void convertHexToInt();
+  void convertIntToIp();
+
 protected:
   virtual void closeEvent(QCloseEvent *event);
 
