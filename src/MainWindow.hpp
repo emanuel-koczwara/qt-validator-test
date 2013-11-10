@@ -3,6 +3,7 @@
 
 
 #include <QMainWindow>
+#include <QStateMachine>
 
 
 namespace Ui
@@ -32,6 +33,7 @@ protected:
 
 private:
   Ui::MainWindow *ui;
+  QStateMachine *machine;
 
 }; // class MainWindow
 
