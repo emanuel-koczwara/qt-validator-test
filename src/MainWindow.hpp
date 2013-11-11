@@ -3,10 +3,10 @@
 
 
 #include <QMainWindow>
+#include <QCloseEvent>
 #include <QStateMachine>
 #include <QRegExp>
 #include <QRegExpValidator>
-#include <QIntValidator>
 
 
 namespace Ui
@@ -30,6 +30,7 @@ public slots:
   void convertBase64ToHex();
   void convertHexToInt();
   void convertIntToIp();
+
   void setIpValidator();
   void setIntValidator();
   void setHexValidator();

@@ -1,8 +1,6 @@
 #include "MainWindow.hpp"
 #include "ui_MainWindow.h"
 #include <QMessageBox>
-#include <QCloseEvent>
-#include <QState>
 #include <QHostAddress>
 
 
@@ -17,6 +15,8 @@ MainWindow::MainWindow(QWidget *parent) :
   intValidator = new QRegExpValidator(QRegExp("[0-9]+"));
   hexValidator = new QRegExpValidator(QRegExp("[0-9a-fA-F]+"));
   base64Validator = new QRegExpValidator(QRegExp("^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"));
+
+  setIpValidator();
 
   machine = new QStateMachine(this);
 
@@ -34,6 +34,13 @@ MainWindow::MainWindow(QWidget *parent) :
   hexToInt->addTransition(ui->pushButton, SIGNAL(clicked()), intToIp);
   intToIp->addTransition(ui->pushButton, SIGNAL(clicked()), ipToInt);
 
+  QObject::connect(ipToInt, SIGNAL(exited()), this, SLOT(convertIpToInt()));
+  QObject::connect(intToHex, SIGNAL(exited()), this, SLOT(convertIntToHex()));
+  QObject::connect(hexToBase64, SIGNAL(exited()), this, SLOT(convertHexToBase64()));
+  QObject::connect(base64ToHex, SIGNAL(exited()), this, SLOT(convertBase64ToHex()));
+  QObject::connect(hexToInt, SIGNAL(exited()), this, SLOT(convertHexToInt()));
+  QObject::connect(intToIp, SIGNAL(exited()), this, SLOT(convertIntToIp()));
+
   machine->addState(ipToInt);
   machine->addState(intToHex);
   machine->addState(hexToBase64);
@@ -43,26 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
   machine->setInitialState(ipToInt);
 
-  QObject::connect(ipToInt, SIGNAL(entered()), this, SLOT(setIpValidator()));
-  QObject::connect(ipToInt, SIGNAL(exited()), this, SLOT(convertIpToInt()));
-
-  QObject::connect(intToHex, SIGNAL(entered()), this, SLOT(setIntValidator()));
-  QObject::connect(intToHex, SIGNAL(exited()), this, SLOT(convertIntToHex()));
-
-  QObject::connect(hexToBase64, SIGNAL(entered()), this, SLOT(setHexValidator()));
-  QObject::connect(hexToBase64, SIGNAL(exited()), this, SLOT(convertHexToBase64()));
-
-  QObject::connect(base64ToHex, SIGNAL(entered()), this, SLOT(setBase64Validator()));
-  QObject::connect(base64ToHex, SIGNAL(exited()), this, SLOT(convertBase64ToHex()));
-
-  QObject::connect(hexToInt, SIGNAL(entered()), this, SLOT(setHexValidator()));
-  QObject::connect(hexToInt, SIGNAL(exited()), this, SLOT(convertHexToInt()));
-
-  QObject::connect(intToIp, SIGNAL(entered()), this, SLOT(setIntValidator()));
-  QObject::connect(intToIp, SIGNAL(exited()), this, SLOT(convertIntToIp()));
-
   machine->start();
-
 }
 
 
@@ -75,24 +63,28 @@ MainWindow::~MainWindow()
 void MainWindow::convertIpToInt()
 {
   ui->lineEdit->setText(QString::number(QHostAddress(ui->lineEdit->text()).toIPv4Address()));
+  setIntValidator();
 }
 
 
 void MainWindow::convertIntToHex()
 {
   ui->lineEdit->setText(QString::number(ui->lineEdit->text().toUInt(), 16).toUpper());
+  setHexValidator();
 }
 
 
 void MainWindow::convertHexToBase64()
 {
   ui->lineEdit->setText(QByteArray(ui->lineEdit->text().toAscii()).toBase64());
+  setBase64Validator();
 }
 
 
 void MainWindow::convertBase64ToHex()
 {
   ui->lineEdit->setText(QString(QByteArray::fromBase64(ui->lineEdit->text().toAscii())));
+  setHexValidator();
 }
 
 
@@ -100,12 +92,14 @@ void MainWindow::convertHexToInt()
 {
   bool ok;
   ui->lineEdit->setText(QString::number(ui->lineEdit->text().toUInt(&ok, 16)));
+  setIntValidator();
 }
 
 
 void MainWindow::convertIntToIp()
 {
   ui->lineEdit->setText(QHostAddress(ui->lineEdit->text().toUInt()).toString());
+  setIpValidator();
 }
 
 
